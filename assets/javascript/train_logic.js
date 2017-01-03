@@ -12,6 +12,8 @@
 
   var database = firebase.database();
 
+  var currrenttime = "03.16"
+
   // 2 - Button for adding trains
   //----------------------------------------------------------
   $("#add-train-btn").on("click", function() {
@@ -74,10 +76,25 @@ database.ref().on("child_added", function(childSnapshot){
 	//Prettify the train start
 	var trnStartPretty = moment.unix(trnStart).format("hh:mm");
 
+	// Time is 3:30 AM
+    var firstTime = "03:00";
+
+      // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+     console.log(firstTimeConverted);
+
+	// Current Time
+      var currentTime = moment();
+      console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
 	// Difference between the times
 
-	var diffTime = moment().diff(moment(trnStart), "minutes");
+	var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
       console.log("DIFFERENCE IN TIME: " + diffTime);
+
+
+	//var diffTime = moment().diff(moment(trnStart), "minutes");
+    //  console.log("DIFFERENCE IN TIME: " + diffTime);
 
 	//Calculate next train arrival time
 	// Time apart (remainder)
@@ -90,11 +107,12 @@ database.ref().on("child_added", function(childSnapshot){
 
     // Next Train
       var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-      console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
+      var arrivalTime = moment(nextTrain).format("hh:mm");
+      console.log("ARRIVAL TIME: " + arrivalTime);
 
        // Add each train's data into the table
-  $("#train-table > tbody").append("<tr><td>" +  "<td>" + trnName + "</td>" + "<td>" + trnDestination+ "</td>" + "<td>" +
-  trnFrequency + "</td>" +  "<td>"+ nextTrain + "</td>" + "<td>" + tMinutesTillTrain + "</td>" + "</td></tr>");
+  $("#train-table > tbody").append("<tr></td>" +  "<td>" + trnName + "</td>" + "<td>" + trnDestination+ "</td>" + "<td>" +
+ trnFrequency + "</td>" +  "<td>"+ arrivalTime + "</td>" + "<td>" + tMinutesTillTrain + "</td>" + "<td></tr>");
 
   // Handle the errors
 }, function(errorObject) {
